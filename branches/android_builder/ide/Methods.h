@@ -51,6 +51,7 @@ public:
 	virtual void New(const String& builder) = 0;
 	virtual void OnLoad() = 0;
 	virtual void OnCtrlLoad(const String& ctrlKey, const String& value) = 0;
+	virtual void OnShow() = 0;
 	virtual void InitSetupCtrlsMap(VectorMap<Id, Ctrl*>& map) = 0;
 	
 	virtual void InitBuilderSetup(BuilderSetup& bs);
@@ -71,10 +72,12 @@ public:
 	virtual void New(const String& builder);
 	virtual void OnLoad();
 	virtual void OnCtrlLoad(const String& ctrlKey, const String& value);
+	virtual void OnShow();
 	
 	virtual void InitSetupCtrlsMap(VectorMap<Id, Ctrl*>& map);
 
 private:
+	void OnSdkPathChange(const String& sdkPath);
 	void OnNdkPathInsert();
 	void OnNdkPathChange();
 	void OnNdkPathChange0(const String& ndkPath);
@@ -108,8 +111,9 @@ public:
 	DefaultBuilderSetup();
 	
 	virtual void New(const String& builder);
-	virtual void OnLoad();
+	virtual void OnLoad() {}
 	virtual void OnCtrlLoad(const String& ctrlKey, const String& value) {}
+	virtual void OnShow() {}
 	
 	virtual void InitSetupCtrlsMap(VectorMap<Id, Ctrl*>& map);
 };
