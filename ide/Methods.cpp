@@ -147,11 +147,10 @@ void AndroidBuilderSetup::New(const String& builder)
 
 void AndroidBuilderSetup::OnLoad()
 {
-	AndroidSDK sdk(GetAndroidSDKPath(), true);
+	String sdkPath = GetAndroidSDKPath();
 	
-	sdk_path.SetData(sdk.GetPath());
-	LoadPlatforms(sdk);
-	LoadBuildTools(sdk);
+	sdk_path.SetData(sdkPath);
+	OnSdkPathChange(sdkPath);
 }
 
 void AndroidBuilderSetup::OnCtrlLoad(const String& ctrlKey, const String& value)
@@ -163,6 +162,27 @@ void AndroidBuilderSetup::OnCtrlLoad(const String& ctrlKey, const String& value)
 		Ctrl* ctrl = map.Get(ctrlKey);
 		if(ctrl == &ndk_path)
 			OnNdkPathChange0(value);
+	}
+}
+
+void AndroidBuilderSetup::OnShow()
+{	
+	AndroidSDK sdk(GetAndroidSDKPath(), true);
+	if(!sdk.Validate())
+		return;
+	
+	if(((String)sdk_platform_version.GetValue()).IsEmpty())
+		sdk_platform_version.SetData(sdk.FindDefaultPlatform());
+	if(((String)sdk_build_tools_release.GetValue()).IsEmpty())
+		sdk_build_tools_release.SetData(sdk.FindDefaultBuildToolsRelease());
+}
+
+void AndroidBuilderSetup::OnSdkPathChange(const String& sdkPath)
+{
+	AndroidSDK sdk(sdkPath, true);
+	if(sdk.Validate()) {
+		LoadPlatforms(sdk);
+		LoadBuildTools(sdk);
 	}
 }
 
@@ -312,11 +332,6 @@ void DefaultBuilderSetup::New(const String& builder)
 		release_link <<= "-Wl,--gc-sections";
 }
 
-void DefaultBuilderSetup::OnLoad()
-{
-	
-}
-
 int CharFilterFileName(int c)
 {
 	return IsAlNum(c) || c == '_' ? c : 0;
@@ -462,7 +477,6 @@ void BuildMethods::Load()
 				}
 				method.Set(method.GetCount() - 1, j, val);
 			}
-
 		}
 		ff.Next();
 	}
@@ -588,12 +602,13 @@ void BuildMethods::SwitchSetupView()
 	builderName.IsEmpty() ? setup.Hide() : setup.Show();
 	
 	if(!builderName.IsEmpty()) {
-		bool showed = false;
 		for(int i = 0; i < setups.GetCount(); i++) {
 			Index<String> currentBuilders = StringToBuilders(setups.GetKey(i));
 			
-			if(currentBuilders.Find(builderName) > -1)
+			if(currentBuilders.Find(builderName) > -1) {
 				setups[i].setupCtrl->Show();
+				setups[i].setupCtrl->OnShow();
+			}
 			else
 				setups[i].setupCtrl->Hide();
 		}
