@@ -338,20 +338,19 @@ bool AndroidBuilder::Link(const Vector<String>& linkfile, const String& linkopti
 			PutConsole(ss.GetResult());
 			return false;
 		}
-	}
-	
-	// TODO: should we align unsigned apk???
-	PutConsole("Aliging apk file...");
-	DeleteFile(target);
-	String zipalignCmd;
-	zipalignCmd << NormalizeExePath(androidSDK.ZipalignPath());
-	zipalignCmd << " -f 4 ";
-	zipalignCmd << (HasFlag("DEBUG") ? signedApkPath : unsignedApkPath) << " ";
-	zipalignCmd << target;
-	//PutConsole(zipalignCmd);
-	if(Execute(zipalignCmd, ss) != 0) {
-		PutConsole(ss.GetResult());
-		return false;
+		
+		PutConsole("Aliging apk file...");
+		DeleteFile(target);
+		String zipalignCmd;
+		zipalignCmd << NormalizeExePath(androidSDK.ZipalignPath());
+		zipalignCmd << " -f 4 ";
+		zipalignCmd << (HasFlag("DEBUG") ? signedApkPath : unsignedApkPath) << " ";
+		zipalignCmd << target;
+		//PutConsole(zipalignCmd);
+		if(Execute(zipalignCmd, ss) != 0) {
+			PutConsole(ss.GetResult());
+			return false;
+		}
 	}
 	
 	return true;

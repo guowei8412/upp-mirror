@@ -1,7 +1,7 @@
-topic "Android";
+topic "Android builder";
 [ $$0,0#00000000000000000000000000000000:Default]
 [{_}%EN-US 
-[s0;=b83; [*+184 Working with Android]&]
+[s0;=b83; [*+184 Working with Android builder]&]
 [s0;b167; [*4 Introduction]&]
 [s0;b58; [2 Google Android is lead mobile operating system all around 
 the world. In this reference we want to show you how you can 
@@ -161,6 +161,8 @@ ttp://developer.android.com/guide/topics/resources/providing`-resources.html][2 
 browser with download site.]&]
 [s0;l160;i128;b58;O0; [2 You don`'t need to specific path manually 
 `- use select directory button instead.]&]
+[s0;l160;i128;b58;O0; [2 On Debian/Ubuntu directories containing JDK`-s 
+are located in `"/usr/lib/jvm/`".]&]
 [s0;b58; [*4 Appendix]&]
 [s0;b58;a58; [2 In the near future we plan to port whole Ultimate`+`+ 
 library to Android.]]]

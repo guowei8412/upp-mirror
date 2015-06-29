@@ -848,6 +848,8 @@ public:
 		void  RunArgs();
 		bool ShouldHaveConsole();
 		void  BuildAndExecute();
+		void  ExecuteBinary();
+		void  ExecuteApk();
 		void  BuildAndDebug0(const String& srcfile);
 		void  BuildAndDebug(bool runto);
 		void  BuildAndExtDebug();
