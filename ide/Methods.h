@@ -68,6 +68,7 @@ public:
 	
 public:
 	AndroidBuilderSetup();
+	virtual ~AndroidBuilderSetup();
 	
 	virtual void New(const String& builder);
 	virtual void OnLoad();
@@ -109,6 +110,7 @@ public:
 	
 public:
 	DefaultBuilderSetup();
+	virtual ~DefaultBuilderSetup();
 	
 	virtual void New(const String& builder);
 	virtual void OnLoad() {}

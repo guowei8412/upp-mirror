@@ -4,7 +4,7 @@ NAMESPACE_UPP
 
 String AndroidNDK::GetDownloadUrl()
 {
-	return "https://developer.android.com/tools/sdk/ndk/index.html";
+	return "https://developer.android.com/ndk/downloads/index.html";
 }
 
 AndroidNDK::AndroidNDK()
