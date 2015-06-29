@@ -91,73 +91,79 @@ bool Ide::ShouldHaveConsole()
 void Ide::BuildAndExecute()
 {
 	if(Build()) {
-		int time = msecs();
-		One<Host> h = CreateHostRunDir();
-		h->ChDir(Nvl(rundir, GetFileFolder(target)));
 		String targetExt = GetFileExt(target);
-		String cmdline;
-		if(!runexternal && targetExt != ".apk")
-			cmdline << '\"' << h->GetHostPath(target) << "\" ";
-		cmdline << ToSystemCharset(runarg);
-		int exitcode;
+		if(targetExt == ".apk")
+			ExecuteApk();
+		else
+			ExecuteBinary();
+	}
+}
+
+void Ide::ExecuteBinary()
+{
+	int time = msecs();
+	One<Host> h = CreateHostRunDir();
+	h->ChDir(Nvl(rundir, GetFileFolder(target)));
+	String cmdline;
+	if(!runexternal)
+		cmdline << '\"' << h->GetHostPath(target) << "\" ";
+	cmdline << ToSystemCharset(runarg);
 		
-		if(targetExt == ".apk") {
-			AndroidSDK androidSDK("/home/klugier/AndroidStudio/sdk");
-			androidSDK.DeducePathReleatedValues();
-			Apk apk(target, androidSDK);
-			String packageName = apk.FindPackageName();
-			String lauchableActivityName = apk.FindLauchableActivity();
-			
-			String installApkOnDeviceCmd;
-			installApkOnDeviceCmd << androidSDK.AdbPath();
-			installApkOnDeviceCmd << " -d";
-			installApkOnDeviceCmd << " install -r " << target;
-			h->Launch(installApkOnDeviceCmd);
-			
-			if(!packageName.IsEmpty() && !lauchableActivityName.IsEmpty()) {
-				String lauchApkOnDeviceCmd;
-				lauchApkOnDeviceCmd << androidSDK.AdbPath();
-				lauchApkOnDeviceCmd << " logcat *:E shell am start";
-				//lauchApkOnDeviceCmd << " shell am start";
-				lauchApkOnDeviceCmd << " -n " << packageName << "/" << lauchableActivityName;
-				//Cout() << lauchApkOnDeviceCmd << "\n";
-				// FIXME: For some resons app close immediatly after lauch, but execute command in terminal works!!!
-				// h->Launch(lauchApkOnDeviceCmd);
-			}
-			
-			return;
-		}
-		
-		switch(runmode) {
-		case RUN_WINDOW:
+	int exitcode;
+	switch(runmode) {
+	case RUN_WINDOW:
+		HideBottom();
+		h->Launch(cmdline, ShouldHaveConsole());
+		break;
+	case RUN_CONSOLE:
+		ShowConsole();
+		PutConsole(String().Cat() << "Executing: " << cmdline);
+		console.Sync();
+		exitcode = h->ExecuteWithInput(cmdline, console_utf8);
+		PutConsole("Finished in " + GetPrintTime(time) + ", exit code: " + AsString(exitcode));
+		break;
+	case RUN_FILE: {
 			HideBottom();
-			h->Launch(cmdline, ShouldHaveConsole());
-			break;
-		case RUN_CONSOLE:
-			ShowConsole();
-			PutConsole(String().Cat() << "Executing: " << cmdline);
-			console.Sync();
-			exitcode = h->ExecuteWithInput(cmdline, console_utf8);
-			PutConsole("Finished in " + GetPrintTime(time) + ", exit code: " + AsString(exitcode));
-			break;
-		case RUN_FILE: {
-				HideBottom();
-				String fn;
-				if(IsNull(stdout_file))
-					fn = ForceExt(target, ".ol");
-				else
-					fn = stdout_file;
-				FileOut out(fn);
-				if(!out) {
-					PromptOK("Unable to open output file [* " + DeQtf(stdout_file) + "] !");
-					return;
-				}
-				if(h->Execute(cmdline, out, console_utf8) >= 0) {
-					out.Close();
-					EditFile(fn);
-				}
+			String fn;
+			if(IsNull(stdout_file))
+				fn = ForceExt(target, ".ol");
+			else
+				fn = stdout_file;
+			FileOut out(fn);
+			if(!out) {
+				PromptOK("Unable to open output file [* " + DeQtf(stdout_file) + "] !");
+				return;
+			}
+			if(h->Execute(cmdline, out, console_utf8) >= 0) {
+				out.Close();
+				EditFile(fn);
 			}
 		}
+	}
+}
+
+void Ide::ExecuteApk()
+{
+	One<Host> host = CreateHost(false);
+	
+	AndroidSDK androidSDK(androidSDKPath, true);
+	Apk apk(target, androidSDK);
+	String packageName = apk.FindPackageName();
+	String lauchableActivityName = apk.FindLauchableActivity();
+			
+	String installApkOnDeviceCmd;
+	installApkOnDeviceCmd << androidSDK.AdbPath();
+	installApkOnDeviceCmd << " -d";
+	installApkOnDeviceCmd << " install -r " << target;
+	host->Execute(installApkOnDeviceCmd);
+			
+	if(!packageName.IsEmpty() && !lauchableActivityName.IsEmpty()) {
+		String lauchApkOnDeviceCmd;
+		lauchApkOnDeviceCmd << androidSDK.AdbPath();
+		// lauchApkOnDeviceCmd << " logcat *:E shell am start";
+		lauchApkOnDeviceCmd << " shell am start";
+		lauchApkOnDeviceCmd << " -n " << packageName << "/" << lauchableActivityName;
+		host->Execute(lauchApkOnDeviceCmd);
 	}
 }
 
