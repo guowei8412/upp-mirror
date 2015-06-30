@@ -144,22 +144,24 @@ void Ide::ExecuteBinary()
 
 void Ide::ExecuteApk()
 {
-	One<Host> host = CreateHost(false);
+	AndroidSDK sdk(androidSDKPath, true);
+	if(!sdk.Validate())
+		return;
 	
-	AndroidSDK androidSDK(androidSDKPath, true);
-	Apk apk(target, androidSDK);
+	One<Host> host = CreateHost(false);
+	Apk apk(target, sdk);
 	String packageName = apk.FindPackageName();
 	String lauchableActivityName = apk.FindLauchableActivity();
-			
+	
 	String installApkOnDeviceCmd;
-	installApkOnDeviceCmd << androidSDK.AdbPath();
+	installApkOnDeviceCmd << sdk.AdbPath();
 	installApkOnDeviceCmd << " -d";
 	installApkOnDeviceCmd << " install -r " << target;
 	host->Execute(installApkOnDeviceCmd);
 			
 	if(!packageName.IsEmpty() && !lauchableActivityName.IsEmpty()) {
 		String lauchApkOnDeviceCmd;
-		lauchApkOnDeviceCmd << androidSDK.AdbPath();
+		lauchApkOnDeviceCmd << sdk.AdbPath();
 		// lauchApkOnDeviceCmd << " logcat *:E shell am start";
 		lauchApkOnDeviceCmd << " shell am start";
 		lauchApkOnDeviceCmd << " -n " << packageName << "/" << lauchableActivityName;
