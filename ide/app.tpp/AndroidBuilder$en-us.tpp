@@ -176,6 +176,23 @@ browser to download site.]&]
 `- use select directory button instead.]&]
 [s0;l160;i128;b58;O0; [2 On Debian/Ubuntu directories containing JDKs 
 are located in `"/usr/lib/jvm/`".]&]
+[s0;l160;i128;b58;O0; [2 Use preprocess IDE option on Java files will 
+generate c/c`+`+ stubs.]&]
+[s0;b58; [*4 Known issues]&]
+[s0;b58; [2 The android builder code is not fully complete.Sometimes 
+there are also errors in the code. If you found something disturbing 
+please let us know about it. You can do this by posting the topic 
+on the official Ultimate`+`+ forum.]&]
+[s0;l160;i150;b58;O0; [2 Debugging doesn`'t work `- functionality is 
+not implemented.]&]
+[s0;l160;i150;b58;O0; [2 Graphical interface for signing applications 
+in release mode `- you need to do this manually using command 
+line interface.]&]
+[s0;l160;i150;b58;O0; [2 Disk space consumption `- to achieve Android 
+project compatibility we make copy of project files.]&]
+[s0;l160;i150;b58;O0; [2 Java sources compile in single thread.]&]
+[s0;l160;i150;b58;O0; [2 Lack of emulator supports `- currently we 
+support only physical devices.]&]
 [s0;b58; [*4 Appendix]&]
 [s0;b58;a58; [2 In the near future we plan to port the whole Ultimate`+`+ 
 library to Android.]]]
