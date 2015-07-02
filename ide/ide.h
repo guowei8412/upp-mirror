@@ -879,7 +879,8 @@ public:
 	
 	void      SetupMobilePlatforms(Bar& bar);
 		void  SetupAndroidMobilePlatform(Bar& bar, const AndroidSDK& androidSDK);
-		void  LauchAndroidSDKManager(const AndroidSDK& androidSDK);
+		void  LaunchAndroidSDKManager(const AndroidSDK& androidSDK);
+		void  LaunchAndroidAVDManager(const AndroidSDK& androidSDK);
 	
 	void      BrowseMenu(Bar& menu);
 		void  RescanCode();

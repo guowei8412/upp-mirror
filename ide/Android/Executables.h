@@ -7,6 +7,21 @@
 
 NAMESPACE_UPP
 
+class Adb : public Moveable<Adb> {
+public:
+	Adb(const String& path);
+	virtual ~Adb();
+	
+public:
+	String MakeInstallCmd(const String& serial, const String& apkPath) const;
+	String MakeInstallOnDeviceCmd(const String& apkPath) const;
+	String MakeInstallOnEmulatorCmd(const String& apkPath) const;
+	
+private:
+	String path;
+	
+};
+
 class NDKBuild {
 public:
 	NDKBuild(const String& path);

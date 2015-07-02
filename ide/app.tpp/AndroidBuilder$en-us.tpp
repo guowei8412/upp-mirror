@@ -176,7 +176,7 @@ browser to download site.]&]
 `- use select directory button instead.]&]
 [s0;l160;i128;b58;O0; [2 On Debian/Ubuntu directories containing JDKs 
 are located in `"/usr/lib/jvm/`".]&]
-[s0;l160;i128;b58;O0; [2 Use preprocess IDE option on Java files will 
+[s0;l160;i128;b58;O0; [2 Use preprocess IDE option on Java files to 
 generate c/c`+`+ stubs.]&]
 [s0;b58; [*4 Known issues]&]
 [s0;b58; [2 The android builder code is not fully complete.Sometimes 
