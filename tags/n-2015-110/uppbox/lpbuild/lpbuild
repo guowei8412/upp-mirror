@@ -1,0 +1,165 @@
+#!/bin/bash
+
+#setup some variables, paths, etc. first:
+
+#upp server settings:
+SRC_PATH="/home/upp/upp.tmp/u"	# where to look for sources
+SVN_PATH="/home/upp/upp.src"	# path to svn working copy
+VER="`svnversion $SVN_PATH`"	# this is obvious, isn't it?
+BUILD="1"						# increment this when building version which is already in launchpad (BUGGY! do not touch, please)
+GPG_PROG="/home/upp/bin/gpg-extpass"	# what program to use for signing (in this case a wrapper that supplies passphrase)
+GPG_KEY="0CE4194D"				# gpg key fingerprint to use
+PYTHON=python
+TMPDIR="/home/upp/lpbuild.tmp"	# directory for temporary files (defaults to /tmp/lpbuild.tmp)
+PPA="upp"
+SERIES=( hardy jaunty karmic lucid maverick natty oneiric )
+
+# my local setup (for debuging)
+#SRC_PATH="/home/h/uppsvn"
+#SVN_PATH="$SRC_PATH"
+#VER="`svnversion $SVN_PATH`"
+#BUILD="1"
+#GPG_PROG="/usr/bin/gpg-extpass"
+#GPG_KEY="13A907FC"
+#PYTHON=python2
+#TMPDIR=""	# use default
+#PPA="upp"
+#SERIES=( hardy jaunty karmic lucid maverick natty oneiric )
+#SIMULATE="-s"
+
+echo "Debian source package builder"
+echo "written by Jan Dolinar (dolik.rce), 2010"
+
+# setup some variables for later
+if [ -z "$TMPDIR" ]
+then
+	tmpdir="/tmp/lpbuild.tmp"
+else
+	tmpdir="$TMPDIR"
+fi
+tmp=$tmpdir/upp-$VER
+orig="$tmpdir/upp_$VER.orig.tar.gz"
+scriptpath="$(cd "${0%/*}" 2>/dev/null; echo "$PWD"/"${0##*/}")" #not from my head:-)
+scriptdir=`dirname "$scriptpath"`
+nests=( uppsrc examples tutorial reference bazaar )
+
+# clean up temporary files
+cd $SRC_PATH
+if [ -d $tmpdir ]
+then
+	# ensure we are not building the same version as last time
+	if [ -d $tmp ]
+	then
+		echo "Version $VER was already built once!"
+		echo " (If you are trying to build it again on purpose,"
+		echo "  delete directory $tmp manually)"
+		exit 1
+	fi
+	echo "Cleaning up previous run..."
+	rm -rf $tmpdir
+fi
+
+# create dir for sources
+mkdir $tmpdir
+mkdir $tmp
+cd $tmp
+
+# copy source files to tmp folder
+echo "copying sources:"
+for folder in ${nests[@]}
+do
+	echo "  $folder"
+	cp -r $SRC_PATH/$folder $tmp/$folder
+done
+# remove .svn directories if they exist
+find $tmp -name ".svn" -exec rm -rf {} \; -prune
+
+# export Makefile for theide
+echo "Copying makefile ..."
+cp $scriptdir/Makefile $tmp
+
+# get changelog from svn
+echo "Creating changelog ..."
+cd $SRC_PATH
+svn --limit 100 --xml -v log $SVN_PATH|$PYTHON $scriptdir/svn2log.py \
+ -u $scriptdir/users.lst -P upp -L -d ultimatepp.org -S all -p /trunk/ \
+ -i "`echo ${nests[@]} |tr \" \" ,`" -o $tmp/changelog
+echo > $tmp/changelog
+
+# Patch the version.h for curent version
+echo "#define IDE_VERSION \"$VER\"" > $tmp/uppsrc/ide/version.h
+
+# compress the sources and Makefile to get orig.tar.gz
+echo "Compressing original source tarball ..."
+cd $tmp
+tar -czf $orig ${nests[@]} Makefile changelog
+
+# prepare architecture independent part of debian directory:
+echo "Debianizing source tree ..."
+mkdir $tmp/debian
+
+# copy maintainer scripts, control file, launcher and manual
+cp $scriptdir/{postinst,prerm,control,theide.desktop,theide.1} $tmp/debian
+chmod +x $scriptdir/{postinst,prerm,rules}
+# copy debian/dopack script
+cp "$scriptdir/dopack-stub" $tmp/debian/dopack
+
+# generate copyrightfile
+cat > $tmp/debian/copyright << EOF
+This package was debianized by Jan Dolinar <dolik.rce@seznam.cz>
+on `date -R`.
+
+Copyright © 1999-2010 Ultimate++ team (http://ultimatepp.org)
+Authors: Mirek Fidler, Tomas Rylek, Daniel Kos
+
+License: BSD (please see /usr/share/common-licenses/BSD).
+EOF
+
+skiporig=""
+
+# cycle through $SERIES and prepare the architecture depedent files
+for dist in ${SERIES[@]}
+do
+	version=$VER-$BUILD~$dist"0"
+
+	# copy rules file and put in the distro info
+	sed -e 's/^SERIES=.*/SERIES="'$dist'"/' $scriptdir/rules > $tmp/debian/rules
+
+	# on hardy g++-4.2 is default, but it builds malfunctioning theide
+	# so we enforce using g++-4.1
+	if [ $dist = "hardy" ]
+	then
+		sed -e 's/Build-Depends: g++ (= 4.1) | g++ (>= 4.3)/Build-Depends: g++-4.1/;' $scriptdir/control > $tmp/debian/control
+	fi
+
+	# generate changelogs (with changes in packaging, not in sources!)
+	cat > "$tmp/debian/changelog" << EOF
+upp ($version) $dist; urgency=low
+
+  * Updated to version $VER
+
+ -- Jan Dolinar <dolik.rce@seznam.cz>  `date -R`
+EOF
+	
+	# call debuild to create the package
+	echo "Packaging upp $version ..."
+	cd $tmp
+	debuild --no-lintian -k$GPG_KEY -m'Jan Dolinar <dolik.rce@seznam.cz>' -sgpg -p$GPG_PROG -S $skiporig
+
+	# upload to launchpad (set SIMULATE="-s" for debugging)
+	echo "Uploading upp $version ..."
+	cd $tmpdir
+	dput -c "$scriptdir/dput.cfg" $SIMULATE "$PPA-$dist" "upp_"$version"_source.changes"
+
+	# next series does not have to send orig.tar.gz again
+	skiporig="-sd"
+
+	# if we are preparing package for hardy, restore the files we altered
+	if [ $dist = "hardy" ]
+	then
+		cp $scriptdir/control $tmp/debian
+		cp $scriptdir/dopack-stub $tmp/debian/dopack
+	fi
+done
+
+echo "FINISHED!"

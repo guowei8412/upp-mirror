@@ -1,0 +1,19 @@
+file
+	srcdoc.tpp,
+	dopack-stub,
+	control,
+	theide.1,
+	theide.desktop,
+	svn2log.py,
+	qp_xml.py,
+	users.lst,
+	rules,
+	prerm,
+	postinst,
+	Makefile,
+	dput.cfg,
+	lpbuild;
+
+mainconfig
+	"" = "";
+

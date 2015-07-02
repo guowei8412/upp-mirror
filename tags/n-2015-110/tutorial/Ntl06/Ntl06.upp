@@ -1,0 +1,11 @@
+description "Polymorphic Array\377";
+
+uses
+	Core;
+
+file
+	Ntl06.cpp;
+
+mainconfig
+	"" = "";
+

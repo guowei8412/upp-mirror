@@ -1,0 +1,22 @@
+description "TheIDE - builders - routines to compile programs\377B";
+
+noblitz;
+
+uses
+	ide\Core;
+
+file
+	Builders.h options(BUILDER_OPTION) PCH,
+	CppBuilder.cpp,
+	MakeFile.cpp,
+	GccBuilder.icpp,
+	coff.h,
+	MscBuilder.icpp,
+	OwcBuilder.icpp,
+	JavaBuilder.icpp,
+	ScriptBuilder.icpp,
+	Info readonly separator,
+	Build.h,
+	Build.cpp,
+	Copying;
+

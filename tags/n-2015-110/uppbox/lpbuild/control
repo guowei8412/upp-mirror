@@ -1,0 +1,26 @@
+Source: upp
+Section: devel
+Priority: optional
+Maintainer: Jan Dolinar <dolik.rce@seznam.cz>
+Standards-Version: 3.8.4
+Build-Depends: g++ (= 4.1) | g++ (>= 4.3), libx11-dev (>= 1.0.0), libxft-dev (>= 2.1.8), libpng12-dev (>= 1.2.8), libbz2-dev, libgtk2.0-dev (>= 2.8.17), libnotify-dev
+Homepage: http://www.ultimatepp.org
+
+Package: upp
+Architecture: all
+Depends: theide, g++ (= 4.1) | g++ (>= 4.3), libx11-dev (>= 1.0.0), libxft-dev (>= 2.1.8), libpng12-dev (>= 1.2.8), libbz2-dev, libgtk2.0-dev (>= 2.8.17), libnotify-dev
+Description: C++ library for cross-platform development
+ Ultimate++ is a radical and innovative GUI toolkit whose number one priority
+ is programmer productivity. C++ is a great programming language but
+ C++ programmers are sometimes hampered by the lack of effective libraries.
+ U++ libraries enable genuine productivity gains with shorter development
+ times and greatly reduced application source code size.
+
+Package: umk
+Architecture: any
+Depends: ${shlibs:Depends}
+Provides: theide
+Description: Command line builder for U++ projects
+ For those who need to build U++ packages from scripts or in minimalistic
+ environments, umk utility provides simple building solution. It fully supports
+ all the build-related features provided by TheIDE, without the actual IDE.

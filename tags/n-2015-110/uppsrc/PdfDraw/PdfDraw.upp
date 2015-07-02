@@ -1,0 +1,17 @@
+description "PDF output as Draw derived class\377128,0,255";
+
+uses
+	Draw;
+
+file
+	PdfDraw.h options PCH,
+	TTFStream.cpp,
+	TTFStruct.cpp,
+	TTFReader.cpp,
+	TTFSubset.cpp,
+	ICCColorSpace.i,
+	PdfDraw.cpp,
+	PdfReport.icpp,
+	Info readonly separator,
+	Copying;
+

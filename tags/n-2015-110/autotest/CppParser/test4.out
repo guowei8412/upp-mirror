@@ -1,0 +1,5 @@
+<globals> {
+	FUNCTIONTEMPLATE, name: Fn<true, int>, qitem: Fn<true,int>(), qtype: , qptype: , natural: template <class T> void Fn<true, int>(), line 1, using 
+}
+<locals> {
+}

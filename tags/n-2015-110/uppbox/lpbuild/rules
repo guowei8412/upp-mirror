@@ -1,0 +1,36 @@
+#!/usr/bin/make -f
+
+ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+	JOBS=-j$(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+else
+	JOBS= 
+endif
+
+ARCH="`dpkg-architecture -qDEB_HOST_ARCH`"
+SERIES=
+
+ifeq ($(SERIES),"hardy")
+	compiler= "CC=g++-4.1" "CXX=g++-4.1" 
+else
+	compiler= "CC=c++" "CXX=c++" 
+endif
+
+clean:
+	$(MAKE) clean
+	-rm -f debian/files
+	-rm -f debian/substvars
+	
+$(CURDIR)/debian/umk:
+	$(MAKE) $(JOBS) PKG=umk $(compiler) "NESTS=uppsrc" "FLAGS=GCC SHARED" VERBOSE=Y BINEXT= "BINPREFIX=debian/"
+
+build: $(CURDIR)/debian/umk
+
+binary-indep:
+	bash -x $(CURDIR)/debian/dopack $(CURDIR) $(CURDIR)/.. upp
+
+binary-arch: build
+	bash -x $(CURDIR)/debian/dopack $(CURDIR) $(CURDIR)/.. umk
+	
+binary: binary-indep binary-arch
+
+.PHONY: build binary-arch binary install

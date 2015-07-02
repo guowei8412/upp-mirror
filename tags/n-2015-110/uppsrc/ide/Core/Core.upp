@@ -1,0 +1,20 @@
+description "TheIDE - common library\377B";
+
+uses
+	Esc,
+	plugin/bz2;
+
+file
+	Core.h options(BUILDER_OPTION) PCH,
+	Core.cpp,
+	Hdepend.cpp optimize_speed,
+	Package.cpp,
+	Workspace.cpp,
+	usc.cpp,
+	Host.h,
+	Host.cpp,
+	BinObj.cpp,
+	src.tpp,
+	Info readonly separator,
+	Copying;
+

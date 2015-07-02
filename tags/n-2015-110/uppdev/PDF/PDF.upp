@@ -1,0 +1,11 @@
+uses
+	PdfDraw,
+	Painter;
+
+file
+	main.cpp,
+	app.iml;
+
+mainconfig
+	"" = "";
+

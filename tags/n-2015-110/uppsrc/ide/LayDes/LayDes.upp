@@ -1,0 +1,30 @@
+description "TheIDE - .lay designer\377B";
+
+uses
+	ide\Common,
+	RichEdit,
+	Esc,
+	IconDes,
+	CodeEditor;
+
+file
+	LayDes.h options(BUILDER_OPTION) PCH,
+	laydes.key,
+	sdiff.cpp,
+	laylib.cpp,
+	layusc.cpp,
+	property.cpp,
+	textprop.cpp,
+	fontprop.cpp,
+	propane.cpp,
+	item.cpp,
+	layout.cpp optimize_speed,
+	visgen.cpp,
+	laydes.cpp,
+	layfile.cpp,
+	laywin.cpp,
+	LayDes.lay,
+	Info readonly separator,
+	LayDes.iml,
+	Copying;
+

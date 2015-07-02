@@ -1,0 +1,11 @@
+description "VectorMap\377";
+
+uses
+	Core;
+
+file
+	Ntl10.cpp;
+
+mainconfig
+	"" = "";
+

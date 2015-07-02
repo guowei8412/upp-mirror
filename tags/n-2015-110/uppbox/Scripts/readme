@@ -1,0 +1,11 @@
+Use 'make' to compile TheIDE. It will generate ~/theide.
+
+Use 'make install' to prepare standard U++ environment. It will create ~/upp
+directory to store U++ library sources, MyApps to store your application
+sources and ~/upp.out as output for intermediate files.
+
+Then start playing with U++ by invoking ~/theide (you might want to put it elsewhere later).
+
+For debian/apt-get based distribution, debian file contains required dependencies in form of
+apt-get commands. You can use this file by running "sh debian" as root (e.g.
+"sudo sh debian" if sudo is available).
