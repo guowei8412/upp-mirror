@@ -142,6 +142,11 @@ void Ide::ExecuteBinary()
 	}
 }
 
+class SelecAndroidDeviceSetup {
+public:
+	
+};
+
 void Ide::ExecuteApk()
 {
 	AndroidSDK sdk(androidSDKPath, true);
@@ -153,12 +158,9 @@ void Ide::ExecuteApk()
 	String packageName = apk.FindPackageName();
 	String lauchableActivityName = apk.FindLauchableActivity();
 	
-	String installApkOnDeviceCmd;
-	installApkOnDeviceCmd << sdk.AdbPath();
-	installApkOnDeviceCmd << " -d";
-	installApkOnDeviceCmd << " install -r " << target;
-	host->Execute(installApkOnDeviceCmd);
-			
+	Adb adb = pick(sdk.MakeAdb());
+	host->Execute(adb.MakeInstallOnDeviceCmd(target));
+	
 	if(!packageName.IsEmpty() && !lauchableActivityName.IsEmpty()) {
 		String lauchApkOnDeviceCmd;
 		lauchApkOnDeviceCmd << sdk.AdbPath();

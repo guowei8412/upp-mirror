@@ -13,5 +13,8 @@ file
 	AndroidManifest.cpp,
 	Executable readonly separator,
 	Executables.h,
-	NDKBuild.cpp;
+	Adb.cpp,
+	NDKBuild.cpp,
+	Devices readonly separator,
+	Devices.h;
 

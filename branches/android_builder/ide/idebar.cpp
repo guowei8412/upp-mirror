@@ -382,7 +382,8 @@ void Ide::SetupMobilePlatforms(Bar& menu)
 
 void Ide::SetupAndroidMobilePlatform(Bar& menu, const AndroidSDK& androidSDK)
 {
-	menu.Add("SDK Manager", THISBACK1(LauchAndroidSDKManager, androidSDK));
+	menu.Add("SDK Manager", THISBACK1(LaunchAndroidSDKManager, androidSDK));
+	menu.Add("AVD Manager", THISBACK1(LaunchAndroidAVDManager, androidSDK));
 }
 
 void Ide::ProjectSvn(Bar& menu)

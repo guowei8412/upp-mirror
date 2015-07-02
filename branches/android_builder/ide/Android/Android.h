@@ -5,6 +5,7 @@
 #include <ide/Core/Core.h>
 
 #include "Executables.h"
+#include "Devices.h"
 
 NAMESPACE_UPP
 
@@ -39,9 +40,13 @@ public:
 	
 	Vector<String> FindPlatforms() const;
 	Vector<String> FindBuildToolsReleases() const;
-	Vector<String> FindAVDNames() const;
 	String         FindDefaultPlatform() const;
 	String         FindDefaultBuildToolsRelease() const;
+	
+	Vector<AndroidVirtualDevice> FindVirtualDevices() const;
+	
+public:
+	Adb MakeAdb() const { return Adb(AdbPath()); }
 	
 public:
 	String BuildToolsDir() const;
