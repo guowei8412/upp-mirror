@@ -222,6 +222,13 @@ void Ide::BuildAndDebug(bool runto)
 {
 	VectorMap<String, String> bm = GetMethodVars(method);
 	String builder = bm.Get("BUILDER", "");
+	
+	// TODO: implement debuggin on android
+	if(builder == "ANDROID") {
+		BuildAndExecute();
+		return;
+	}
+	
 	if(!Build())
 		return;
 	if(!FileExists(target))
