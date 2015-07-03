@@ -13,6 +13,8 @@ public:
 	virtual ~Adb();
 	
 public:
+	String MakeListDevicesCmd() const;
+
 	String MakeInstallCmd(const String& serial, const String& apkPath) const;
 	String MakeInstallOnDeviceCmd(const String& apkPath) const;
 	String MakeInstallOnEmulatorCmd(const String& apkPath) const;
