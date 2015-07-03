@@ -7,9 +7,26 @@ NAMESPACE_UPP
 
 class AndroidDevice : public Moveable<AndroidDevice> {
 public:
+	AndroidDevice() {}
+	virtual ~AndroidDevice() {}
+	
+public:
+	String GetSerial() const { return serial; }
+	String GetUsb() const    { return usb; }
+	String GetModel() const  { return model; }
+	
+	void SetSerial(const String& serial) { this->serial = serial; }
+	void SetUsb(const String& usb)       { this->usb = usb; }
+	void SetModel(const String& model)   { this->model = model; }
+	
+public:
+	bool IsEmulator() const       { return usb.IsEmpty(); }
+	bool IsPhysicalDevice() const { return !IsEmulator(); }
 	
 private:
 	String serial;
+	String usb;
+	String model;
 };
 
 class AndroidVirtualDevice : public Moveable<AndroidVirtualDevice> {

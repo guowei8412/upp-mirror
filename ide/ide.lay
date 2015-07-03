@@ -777,3 +777,9 @@ LAYOUT(JumpLayout, 692, 496)
 	UNTYPED(list, HSizePosZ(184, 8).VSizePosZ(32, 4))
 END_LAYOUT
 
+LAYOUT(SelectAndroidDeviceLayout, 432, 228)
+	ITEM(Button, ok, SetLabel(t_("OK")).RightPosZ(72, 64).BottomPosZ(4, 24))
+	ITEM(Button, cancel, SetLabel(t_("Cancel")).RightPosZ(4, 64).BottomPosZ(4, 24))
+	ITEM(ArrayCtrl, devicesArray, AutoHideSb(true).HSizePosZ(4, 4).TopPosZ(4, 192))
+END_LAYOUT
+

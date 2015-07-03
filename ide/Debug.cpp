@@ -142,10 +142,51 @@ void Ide::ExecuteBinary()
 	}
 }
 
-class SelecAndroidDeviceSetup {
-public:
+class SelectAndroidDeviceDlg : public WithSelectAndroidDeviceLayout<TopWindow> {
+	typedef SelectAndroidDeviceDlg CLASSNAME;
 	
+public:
+	SelectAndroidDeviceDlg(AndroidSDK* sdk);
+	
+	int    GetDeviceCount() const    { return devicesArray.GetCount(); }
+	String GetSelectedSerial() const;
+	
+private:
+	void LoadPhysicalDevices();
+	
+private:
+	AndroidSDK* sdk;
 };
+
+SelectAndroidDeviceDlg::SelectAndroidDeviceDlg(AndroidSDK* sdk) :
+	sdk(sdk)
+{
+	CtrlLayoutOKCancel(*this, "Android device selection");
+	
+	devicesArray.AddColumn("Device/Model");
+	devicesArray.AddColumn("Serial");
+	
+	LoadPhysicalDevices();
+}
+
+String SelectAndroidDeviceDlg::GetSelectedSerial() const
+{
+	int row = devicesArray.IsCursor() ? devicesArray.GetCursor() : 0;
+	return devicesArray.GetCount() ? devicesArray.Get(row, 1) : "";
+}
+
+void SelectAndroidDeviceDlg::LoadPhysicalDevices()
+{
+	Vector<AndroidDevice> devices = sdk->FindDevices();
+	for(int i = 0; i < devices.GetCount(); i++) {
+		if(devices[i].IsPhysicalDevice()) {
+			devicesArray.Add(devices[i].GetModel(), devices[i].GetSerial());
+		}
+	}
+	
+	if(devicesArray.GetCount())
+		devicesArray.Select(0);
+}
 
 void Ide::ExecuteApk()
 {
@@ -153,13 +194,17 @@ void Ide::ExecuteApk()
 	if(!sdk.Validate())
 		return;
 	
+	SelectAndroidDeviceDlg select(&sdk);
+	if(select.GetDeviceCount() != 1 && select.Run() != IDOK)
+		return;
+	
 	One<Host> host = CreateHost(false);
 	Apk apk(target, sdk);
 	String packageName = apk.FindPackageName();
 	String lauchableActivityName = apk.FindLauchableActivity();
 	
-	Adb adb = pick(sdk.MakeAdb());
-	host->Execute(adb.MakeInstallOnDeviceCmd(target));
+	Adb adb = sdk.MakeAdb();
+	host->Execute(adb.MakeInstallCmd(select.GetSelectedSerial() ,target));
 	
 	if(!packageName.IsEmpty() && !lauchableActivityName.IsEmpty()) {
 		String lauchApkOnDeviceCmd;
@@ -223,7 +268,7 @@ void Ide::BuildAndDebug(bool runto)
 	VectorMap<String, String> bm = GetMethodVars(method);
 	String builder = bm.Get("BUILDER", "");
 	
-	// TODO: implement debuggin on android
+	// TODO: implement debugging on android
 	if(builder == "ANDROID") {
 		BuildAndExecute();
 		return;

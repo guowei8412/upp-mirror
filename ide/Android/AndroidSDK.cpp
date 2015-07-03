@@ -83,6 +83,47 @@ Vector<String> AndroidSDK::FindBuildToolsReleases() const
 	return buildTools;
 }
 
+Vector<AndroidDevice> AndroidSDK::FindDevices() const
+{
+	Vector<AndroidDevice> devices;
+	
+	String out;
+	if(Sys(AdbPath() + " devices -l", out) == 0) {
+		Vector<String> lines;
+		Vector<String> outputLines = Split(out, "\n");
+		for(int i = 0; i < outputLines.GetCount(); i++) {
+			if(!outputLines[i].StartsWith("*") && !outputLines[i].StartsWith(" "))
+				lines.Add(outputLines[i]);
+		}
+		
+		for(int i = 1; i < lines.GetCount(); i++) {
+			AndroidDevice device;
+			
+			Vector<String> elements = Split(lines[i], " ");
+			for(int j = 0; j < elements.GetCount(); j++) {
+				if(j == 0) {
+					device.SetSerial(elements[j]);
+					continue;
+				}
+				
+				Vector<String> element = Split(elements[j], ":");
+				if(element.GetCount() == 2) {
+					String tag  = element[0];
+					String data = element[1];
+					if(tag == "usb")
+						device.SetUsb(data);
+					else
+					if(tag == "model")
+						device.SetModel(data);
+				}
+			}
+			devices.Add(device);
+		}
+	}
+	
+	return devices;
+}
+
 Vector<AndroidVirtualDevice> AndroidSDK::FindVirtualDevices() const
 {
 	Vector<AndroidVirtualDevice> avdes;

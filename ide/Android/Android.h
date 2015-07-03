@@ -43,6 +43,7 @@ public:
 	String         FindDefaultPlatform() const;
 	String         FindDefaultBuildToolsRelease() const;
 	
+	Vector<AndroidDevice>        FindDevices() const;
 	Vector<AndroidVirtualDevice> FindVirtualDevices() const;
 	
 public:
