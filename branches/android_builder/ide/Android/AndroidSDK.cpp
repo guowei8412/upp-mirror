@@ -88,7 +88,7 @@ Vector<AndroidDevice> AndroidSDK::FindDevices() const
 	Vector<AndroidDevice> devices;
 	
 	String out;
-	if(Sys(AdbPath() + " devices -l", out) == 0) {
+	if(Sys(NormalizeExePath(AdbPath()) + " devices -l", out) == 0) {
 		Vector<String> lines;
 		Vector<String> outputLines = Split(out, "\n");
 		for(int i = 0; i < outputLines.GetCount(); i++) {
@@ -129,7 +129,7 @@ Vector<AndroidVirtualDevice> AndroidSDK::FindVirtualDevices() const
 	Vector<AndroidVirtualDevice> avdes;
 	
 	String out;
-	if(Sys(AndroidPath() + " list avd", out) == 0) {
+	if(Sys(NormalizeExePath(AndroidPath()) + " list avd", out) == 0) {
 		Vector<String> lines = Split(out, "\n");
 		
 		AndroidVirtualDevice avd;
