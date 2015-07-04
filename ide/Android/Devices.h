@@ -20,7 +20,7 @@ public:
 	void SetModel(const String& model)   { this->model = model; }
 	
 public:
-	bool IsEmulator() const       { return usb.IsEmpty(); }
+	bool IsEmulator() const       { return model.IsEmpty(); }
 	bool IsPhysicalDevice() const { return !IsEmulator(); }
 	
 private:
