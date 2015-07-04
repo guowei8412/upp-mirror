@@ -186,6 +186,8 @@ void SelectAndroidDeviceDlg::LoadPhysicalDevices()
 	
 	if(devicesArray.GetCount())
 		devicesArray.Select(0);
+	else
+		ok.Disable();
 }
 
 void Ide::ExecuteApk()
@@ -196,6 +198,8 @@ void Ide::ExecuteApk()
 	
 	SelectAndroidDeviceDlg select(&sdk);
 	if(select.GetDeviceCount() != 1 && select.Run() != IDOK)
+		return;
+	if(!select.GetDeviceCount())
 		return;
 	
 	One<Host> host = CreateHost(false);
