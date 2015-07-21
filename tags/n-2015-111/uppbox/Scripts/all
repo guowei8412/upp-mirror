@@ -1,0 +1,22 @@
+rm ~/upload/* || true
+
+export WINEDEBUG=-all wine program.exe
+
+set -e
+
+mkdir ~/upload || true
+
+rm -r ~/upp.tmp || true
+mkdir ~/upp.tmp || true
+
+# bash ~/Scripts/www
+
+bash ~/Scripts/win
+
+bash ~/Scripts/src
+
+# bash ~/Scripts/deb64
+
+chmod a=rw ~/upload/*
+
+#bash ~/upp.src/lpbuild2/lpbuild.sh ~/upp.src/lpbuild2/nightly.cfg

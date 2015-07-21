@@ -1,0 +1,11 @@
+description "#WAIT: 25\377";
+
+uses
+	Core;
+
+file
+	String.cpp;
+
+mainconfig
+	"" = "";
+

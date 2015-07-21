@@ -1,0 +1,12 @@
+description "SocketWaitEvent and asynchronous HttpRequest in GUI environment\377";
+
+uses
+	CtrlLib;
+
+file
+	GuiWebCrawler.cpp,
+	GuiWebCrawler.lay;
+
+mainconfig
+	"" = "GUI";
+

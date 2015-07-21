@@ -1,0 +1,22 @@
+description "This package is only useful for translating U++ to other languages\377";
+
+uses
+	CtrlLib,
+	Web,
+	ide,
+	PostgreSQL,
+	RichEdit,
+	MySql,
+	Ole,
+	GridCtrl,
+	Web,
+	Oracle,
+	usvn,
+	SqlCtrl;
+
+file
+	main.cpp;
+
+mainconfig
+	"" = "GUI";
+

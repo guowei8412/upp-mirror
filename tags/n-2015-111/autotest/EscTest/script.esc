@@ -1,0 +1,17 @@
+main() {
+	Print("Hello world!");
+	x = {};
+	x.a = 123;
+	x.b = "Hello!";
+
+	:out = x;
+
+	x.foo = @(x) { .a = x; };
+
+	x.foo("test");
+	:out2 = x.a;
+
+	:out3 = [];
+	for(i = 0; i < 10; i++)
+		:out3[] = i;
+}

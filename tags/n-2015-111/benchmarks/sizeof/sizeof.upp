@@ -1,0 +1,12 @@
+uses
+	Core,
+	Draw;
+
+file
+	main.cpp
+		depends() test.h,
+	info.txt;
+
+mainconfig
+	"" = "MT";
+
