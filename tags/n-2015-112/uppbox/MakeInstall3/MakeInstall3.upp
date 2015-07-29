@@ -1,0 +1,11 @@
+uses
+	plugin\bz2,
+	Core,
+	plugin\ftp;
+
+file
+	Main.cpp;
+
+mainconfig
+	"" = "";
+

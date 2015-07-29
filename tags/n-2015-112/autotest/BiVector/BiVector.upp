@@ -1,0 +1,12 @@
+description "#WAIT: 20\377";
+
+uses
+	Core;
+
+file
+	BiVector.cpp;
+
+mainconfig
+	"" = "",
+	"" = "LONG";
+

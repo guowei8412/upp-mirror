@@ -1,0 +1,20 @@
+file
+	win,
+	www,
+	deb64,
+	idebuild,
+	uppdeb,
+	uppnighty2deb,
+	src,
+	debian,
+	all,
+	GCCMK.bm,
+	Makefile,
+	doinstall,
+	domake,
+	readme,
+	upp.spec;
+
+mainconfig
+	"" = "SCRIPTS";
+

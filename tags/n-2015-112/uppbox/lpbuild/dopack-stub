@@ -1,0 +1,152 @@
+#!/bin/bash
+
+MAINTAINER="Jan Dolinar"
+EMAIL="dolik.rce@seznam.cz"
+SRC_PATH=$1
+DEST_PATH=$2
+PKG=$3
+
+#determine architecture (i386 or amd64 or lpia)
+arch="`dpkg-architecture -qDEB_HOST_ARCH`"
+
+#check if the destination exists
+if [ ! -d $DEST_PATH ]
+then
+	echo "ERROR - Invalid destination path '$DEST_PATH'"
+	echo "Please modify current script to fit your destination path"
+	exit 1
+fi
+
+#create a temporary folder to ease the cleaning after building
+outtmp="`mktemp -t -d builddeb.XXXXXXX`"
+
+#preparing the deb
+echo "Building package '$PKG' from folder '$SRC_PATH'"
+echo "Destination path of package is '$DEST_PATH'"
+
+#create directories
+tmp=$outtmp/deb
+mkdir -p $tmp/usr/share/doc/$PKG
+
+if [ $PKG = "upp" ]
+then
+	# create necessary directories
+	mkdir -p $tmp/usr/share/$PKG
+	
+	# copy source files to tmp folder
+	# (copying is done by rsync, because it allows to exclude svn and also 
+	#  to change permissions on the files)
+	subfolders=( uppsrc examples tutorial reference bazaar )
+	echo "copying sources:"
+	for folder in ${subfolders[@]}
+	do
+		echo "  $folder"
+		cp -r $SRC_PATH/$folder $tmp/usr/share/$PKG
+	done
+elif [ $PKG = "umk" ]
+then
+	#create necessary directories
+	mkdir -p $tmp/usr/bin
+	
+	# move umk executable into the package directory structure
+	mv $SRC_PATH/debian/umk $tmp/usr/bin/umk
+
+	# check if we really have the executable there, just in case
+	if [ ! -e $tmp/usr/bin/umk ]
+	then
+		echo "Something went wrong: the executable is not in its place!"
+		exit 1
+	fi
+
+	# generate dependencies
+	cd $SRC_PATH
+	dpkg-shlibdeps $tmp/usr/bin/umk
+
+	# strip symbols from executable
+	strip --strip-all --remove-section=.comment --remove-section=.note $tmp/usr/bin/umk
+else
+	#create necessary directories
+	mkdir -p $tmp/usr/bin
+	mkdir -p $tmp/usr/share/{pixmaps,applications}
+	mkdir -p $tmp/usr/share/man/man1
+	
+	if [ $PKG = "theide" ]
+	then
+		# move theide executable into the package directory structure
+		mv $SRC_PATH/debian/ide $tmp/usr/bin/theide
+	elif [ $PKG = "theide-nogtk" ]
+	then
+		# move theide-nogtk executable into the package directory structure
+		mv $SRC_PATH/debian/ide-nogtk $tmp/usr/bin/theide
+	fi
+
+	# check if we really have the executable there, just in case
+	if [ ! -e $tmp/usr/bin/theide ]
+	then
+		echo "Something went wrong: the executable is not in its place!"
+		exit 1
+	fi
+
+	# copy icon file
+	cp $SRC_PATH/uppsrc/ide/theide-48.png $tmp/usr/share/pixmaps/theide.png
+
+	# copy launcher
+	cp $SRC_PATH/debian/theide.desktop $tmp/usr/share/applications
+
+	# install manual page
+	cat $SRC_PATH/debian/theide.1 |gzip -9 > $tmp/usr/share/man/man1/theide.1.gz
+
+	# generate dependencies
+	cd $SRC_PATH
+	dpkg-shlibdeps $tmp/usr/bin/theide
+
+	# strip symbols from executable
+	strip --strip-all --remove-section=.comment --remove-section=.note $tmp/usr/bin/theide
+fi
+
+#install changelogs
+cat $SRC_PATH/changelog |gzip -9 > $tmp/usr/share/doc/$PKG/changelog.gz
+cat $SRC_PATH/debian/changelog |gzip -9 > $tmp/usr/share/doc/$PKG/changelog.Debian.gz
+
+# copy copyright file
+cp $SRC_PATH/debian/copyright $tmp/usr/share/doc/$PKG
+
+#create md5sums file
+cd $tmp
+mkdir $tmp/DEBIAN
+find ./ -type f -exec md5sum {} \; | sed s/.[/]// >> $outtmp/md5sums
+mv $outtmp/md5sums $tmp/DEBIAN/md5sums
+
+# create control file
+cd $SRC_PATH
+dpkg-gencontrol -P$tmp -p$PKG
+
+# set permissions and owners
+cd $tmp
+find ./ -type d -exec chmod 755 {} \; , -type f -exec chmod 644 {} \;
+chown -R root:root ./
+
+if [ $PKG = "umk" ]
+then
+	# set permissions for executable files
+	chmod 0755 $tmp/usr/bin/umk
+elif [ $PKG = "upp" ]
+then
+	# copy maintainer scripts
+	cp $SRC_PATH/debian/{postinst,prerm} $tmp/DEBIAN
+	# set permissions for executable files
+	chmod 0755 $tmp/DEBIAN/{postinst,prerm}
+else
+	# copy maintainer scripts
+	cp $SRC_PATH/debian/{postinst,prerm} $tmp/DEBIAN
+	# set permissions for executable files
+	chmod 0755 $tmp/DEBIAN/{postinst,prerm} $tmp/usr/bin/theide
+fi
+
+# create .deb package
+dpkg-deb -b $tmp $DEST_PATH
+
+# delete tmp directory
+rm -r $outtmp
+
+echo "FINISHED!"

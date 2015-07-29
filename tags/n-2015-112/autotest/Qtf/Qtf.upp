@@ -1,0 +1,12 @@
+uses
+	Core,
+	RichText,
+	PdfDraw;
+
+file
+	test.qtf,
+	Qtf.cpp;
+
+mainconfig
+	"" = "";
+

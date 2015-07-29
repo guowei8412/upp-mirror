@@ -1,0 +1,15 @@
+uses
+	Core;
+
+file
+	XmlStream.cpp,
+	20130831_OB_536032_UZSZ.xml,
+	20131102_ST_ZZSZ.xml,
+	20131110_ST_ZZSZ.xml,
+	0.xml,
+	1.xml,
+	2.xml;
+
+mainconfig
+	"" = "TEST_XML";
+

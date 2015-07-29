@@ -1,0 +1,11 @@
+description "Bidirectional containers\377";
+
+uses
+	Core;
+
+file
+	Ntl07.cpp;
+
+mainconfig
+	"" = "";
+

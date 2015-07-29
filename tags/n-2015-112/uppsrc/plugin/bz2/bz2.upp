@@ -1,0 +1,18 @@
+description "BZ2 compressor/decompressor\3770,128,128";
+
+optimize_speed;
+
+options(BUILDER_OPTION) NOWARNINGS;
+
+uses
+	Core;
+
+library(POSIX) bz2;
+
+file
+	Wrapper readonly separator,
+	bz2.h,
+	bz2upp.cpp,
+	bzlib.c,
+	src.tpp;
+

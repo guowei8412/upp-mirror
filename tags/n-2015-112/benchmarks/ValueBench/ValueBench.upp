@@ -1,0 +1,13 @@
+optimize_speed;
+
+uses
+	Core;
+
+file
+	ValueBench.cpp,
+	data.txt;
+
+mainconfig
+	"" = "MT SVO_VALUE",
+	"" = "SVO_VALUE";
+

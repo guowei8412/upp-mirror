@@ -1,0 +1,17 @@
+description "Demonstrates RescaleFilter for hight-quality image resizing\377";
+
+optimize_speed;
+
+uses
+	CtrlLib,
+	Painter,
+	plugin/jpg,
+	plugin/gif;
+
+file
+	main.cpp,
+	image.iml;
+
+mainconfig
+	"" = "GUI";
+

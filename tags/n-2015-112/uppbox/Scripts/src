@@ -1,0 +1,31 @@
+set -e
+
+#rm ~/upload/* || true
+
+#remove Win32 specific files
+rm ~/upp.tmp/u/*.exe || true
+rm ~/upp.tmp/u/*.map || true
+rm ~/upp.tmp/u/*.dll || true
+rm ~/upp.tmp/u/*.upp || true
+rm ~/upp.tmp/u/*.chk || true
+
+cp ~/Scripts/GCCMK.bm ~/.upp/theide
+
+~/bin/umk ~/upp.src/uppsrc ide ~/Scripts/GCCMK.bm -asrXk ~/upp.tmp/u/uppsrc
+
+mv ~/upp.tmp/u/uppsrc/Makefile ~/upp.tmp/u/uppsrc/Makefile.in
+
+cp ~/Scripts/Makefile ~/upp.tmp/u
+cp ~/Scripts/domake ~/upp.tmp/u
+cp ~/Scripts/doinstall ~/upp.tmp/u
+cp ~/Scripts/readme ~/upp.tmp/u
+cp ~/Scripts/upp.spec ~/upp.tmp/u
+cp ~/Scripts/debian ~/upp.tmp/u
+
+cp ~/Scripts/GCCMK.bm ~/upp.tmp/u/GCC.bm.in
+
+cd ~/upp.tmp
+mv u upp-x11-src-`svnversion ~/upp.src`
+tar -cvvzf ~/upload/upp-x11-src-`svnversion ~/upp.src`.tar.gz upp-x11-src-`svnversion ~/upp.src`
+mv upp-x11-src-`svnversion ~/upp.src` u
+#~/bin/upload
